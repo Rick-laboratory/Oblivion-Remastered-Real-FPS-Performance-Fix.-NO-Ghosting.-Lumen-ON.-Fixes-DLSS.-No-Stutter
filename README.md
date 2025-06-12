@@ -24,7 +24,7 @@ This tool accurately detects your **real dedicated VRAM** and patches the game�
 - 100% **offline, portable, no bloat**
 - Works instantly – just run and play
 
-➡️ [Download]([[https://lnkd.in/gwja-GjR](https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix)])
+➡️ [Download]https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix
 
 ---
 
@@ -100,7 +100,7 @@ Dieses Tool erkennt deinen tatsächlichen dedizierten Videospeicher und **setzt 
 2. Starte sie einmal – deine INI wird gepatcht (ein Backup wird automatisch erstellt)
 3. Spiel starten & Performance genießen
 
-➡️ [Download]([https://lnkd.in/gwja-GjR](https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix))
+➡️ [Download]https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix
 
 ---
 
