@@ -100,7 +100,7 @@ Dieses Tool erkennt deinen tatsächlichen dedizierten Videospeicher und **setzt 
 2. Starte sie einmal – deine INI wird gepatcht (ein Backup wird automatisch erstellt)
 3. Spiel starten & Performance genießen
 
-➡️ [Download](https://lnkd.in/gwja-GjR)
+➡️ [Download]([https://lnkd.in/gwja-GjR](https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix))
 
 ---
 
