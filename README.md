@@ -24,7 +24,7 @@ This tool accurately detects your **real dedicated VRAM** and patches the game�
 - 100% **offline, portable, no bloat**
 - Works instantly – just run and play
 
-➡️ [Download](https://lnkd.in/gwja-GjR)
+➡️ [Download]([https://lnkd.in/gwja-GjR](https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix))
 
 ---
 
