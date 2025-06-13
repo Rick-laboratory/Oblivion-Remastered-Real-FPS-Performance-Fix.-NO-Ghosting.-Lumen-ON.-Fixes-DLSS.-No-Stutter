@@ -82,7 +82,7 @@ Das Spiel erkennt deinen **GPU-VRAM nicht korrekt** und setzt ihn auf **"unbegre
 - 🐌 Performance bricht ein (Stuttering, Lags)  
 - 💥 Mögliche Crashes durch Memory Overload  
 
-Seit dem offiziellen Launch wurde dieses Problem **nicht behoben**, obwohl es alle betrifft, die kein Low-End-System besitzen.
+Seit dem offiziellen Launch wurde dieses Problem **nicht behoben**, obwohl es alle betrifft.
 
 ## ✅ Lösung
 
