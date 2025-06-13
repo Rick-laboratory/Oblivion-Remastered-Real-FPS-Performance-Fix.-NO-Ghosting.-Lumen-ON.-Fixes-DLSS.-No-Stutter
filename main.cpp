@@ -1,10 +1,10 @@
-//#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <dxgi.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cmath>      // für std::round
+#include <cmath>      // fÃ¼r std::round
 #include <dxgi.h>
 #include <iostream>
 #include <fstream>
@@ -13,7 +13,7 @@
 #include <filesystem>
 #include <cstdlib>
 #include <regex>
-//#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dxgi.lib")
 
 // Dein hartkodierter Config-Block mit Marker {POOLSIZE}
 const std::string configTemplate = R"(
@@ -981,9 +981,30 @@ std::string GetTargetPath() {
         std::cerr << "USERPROFILE nicht gefunden\n";
         exit(1);
     }
-    std::filesystem::path target = std::filesystem::path(userProfile)
-        / "Documents" / "My Games" / "Oblivion Remastered" / "Saved" / "Config" / "Windows";
-    std::filesystem::create_directories(target);
+
+    std::filesystem::path basePath = std::filesystem::path(userProfile)
+        / "Documents" / "My Games" / "Oblivion Remastered" / "Saved" / "Config";
+
+    std::filesystem::path windowsPath = basePath / "Windows";
+    std::filesystem::path wingdkPath = basePath / "WinGDK";
+
+    std::filesystem::path target;
+
+    if (std::filesystem::exists(windowsPath)) {
+        target = windowsPath;
+        std::cout << "Used Path: " << target << "\n";
+    }
+    else if (std::filesystem::exists(wingdkPath)) {
+        target = wingdkPath;
+        std::cout << "Used Path:: " << target << "\n";
+    }
+    else {
+        // StandardmÃ¤ÃŸig: "Windows" erzeugen
+        target = windowsPath;
+        std::cout << "Keiner der Pfade vorhanden. Erstelle Standardpfad: " << target << "\n";
+        std::filesystem::create_directories(target);
+    }
+
     return (target / "Engine.ini").string();
 }
 // 1) Ermittelt den dedizierten VRAM und berechnet eine PoolSize (95%)
@@ -1050,7 +1071,7 @@ std::string generateConfig(double rawPoolSize)
 
 int main() {
     int poolSize = detectPoolSizeMB();
-    std::cout << "Berechneter PoolSize: " << poolSize << " MB\n";
+    std::cout << "Calculated PoolSize: " << poolSize << " MB\n";
 
     // {POOLSIZE} in beiden Templates ersetzen
     std::string part1 = std::regex_replace(configTemplate, std::regex(R"(\{POOLSIZE\})"), std::to_string(poolSize));
@@ -1059,7 +1080,7 @@ int main() {
     // Zielpfad holen
     std::string targetPath = GetTargetPath();
 
-    // Datei löschen, falls vorhanden
+    // Datei lÃ¶schen, falls vorhanden
     // 
 // Backup, falls vorhanden
     if (std::filesystem::exists(targetPath)) {
@@ -1068,24 +1089,25 @@ int main() {
         std::error_code ec;
         std::filesystem::copy_file(targetPath, backupPath, std::filesystem::copy_options::overwrite_existing, ec);
         if (ec) {
-            std::cerr << "Fehler beim Erstellen des Backups: " << ec.message() << "\n";
+            std::cerr << "Issue creating the backup: " << ec.message() << "\n";
         }
         else {
-            std::cout << "Backup erstellt unter: " << backupPath << "\n";
+            std::cout << "Backup created at: " << backupPath << "\n";
         }
-        std::remove(targetPath.c_str()); // jetzt löschen
+        std::remove(targetPath.c_str()); // jetzt lÃ¶schen
     }
 
     // Datei neu schreiben mit kombiniertem Inhalt
     std::ofstream outFile(targetPath);
     if (!outFile) {
-        std::cerr << "Konnte Datei nicht schreiben: " << targetPath << "\n";
+        std::cerr << "Wasnt able to write the file: " << targetPath << "\n";
         return 1;
     }
 
     outFile << part1 << "\n" << part2;
     outFile.close();
 
-    std::cout << "INI-Datei erfolgreich neu erstellt unter:\n" << targetPath << "\n";
+    std::cout << "INI-File successfully created at:\n" << targetPath << "\n";
+    system("PAUSE");
     return 0;
 }
