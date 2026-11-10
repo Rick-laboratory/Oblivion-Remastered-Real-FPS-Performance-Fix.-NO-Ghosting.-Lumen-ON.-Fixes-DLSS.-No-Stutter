@@ -1,132 +1,62 @@
-# Oblivion Remastered – Performance Fix Tool 🛠️🐍
+# Oblivion Remastered — Configuration Tool
 
-## ⚠️ The Problem
+A Windows C++ utility that fills in a texture-streaming pool size and writes the repository's historical `Engine.ini` preset. It can enumerate DXGI adapters, print the proposed configuration, and back up an existing file before replacing it.
 
-**Oblivion Remastered** (2025) suffers from a serious issue:
-The game **fails to detect your GPU's VRAM** and assumes it's *unlimited*.  
-Sounds great? It’s not.
+**This is a configuration experiment.** The preset changes hundreds of rendering, streaming, threading and input settings. It is not a verified fix for every game version, GPU, DLSS issue or source of stutter. The repository name is retained for existing links.
 
-Instead, this leads to:
+## Build
 
-- 🧠 Poor memory management  
-- 🐌 Lag, microstutters, and framerate drops  
-- 💥 Crashes due to memory overflows  
+Windows, a C++17 compiler and CMake 3.16+:
 
-This bug has existed **since release** – and was never addressed officially.
+```sh
+cmake -S . -B build
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
 
-## ✅ The Fix
+Examples below use a single-configuration build. Visual Studio builds place the executable in `build/Release/`.
 
-This tool accurately detects your **real dedicated VRAM** and patches the game’s configuration to use it properly.
+## Inspect and apply
 
-### What it does:
-- Proper **GPU VRAM detection**
-- Automatically patches your `.ini` settings
-- 100% **offline, portable, no bloat**
-- Works instantly – just run and play
+```powershell
+.\build\oblivion-config.exe --list-gpus
+.\build\oblivion-config.exe --preview --pool-mib 6144
+.\build\oblivion-config.exe --preview --adapter 0
+.\build\oblivion-config.exe --apply "C:\path\to\Saved\Config\Windows\Engine.ini" --pool-mib 6144
+```
 
-➡️ [Download](https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix)
+Run the game once to create its configuration, then close it. Find the actual `Engine.ini` under your Documents/My Games/Oblivion Remastered configuration directory; the platform folder can be `Windows` or `WinGDK`, and Documents may be redirected. Pass the exact file path. The parent directory must already exist.
 
----
+- No arguments show help; `--preview` writes the preset to standard output.
+- `--apply` **replaces the whole file**, including unrelated custom settings.
+- An existing file is copied to a uniquely named sibling `.bak` file. Backup failure stops the operation.
+- The replacement is fully written and flushed to a temporary sibling before it replaces the destination. Earlier backups are retained.
+- To undo, close the game and restore the printed backup path to the original `Engine.ini`. For a newly created file with no backup, remove that generated file.
 
-## 🔧 How to Use
+Do not edit the same configuration concurrently while applying a preset.
 
-1. Download the latest `.exe`  
-2. Run it once – it will patch the INI (a backup is created automatically)  
-3. Launch the game – and enjoy smoother performance
+## What the pool value means
 
----
+Without `--pool-mib`, the tool chooses the adapter with the largest dedicated VRAM value, or the adapter selected by `--adapter`, and retains the original **95% heuristic**. Adapter selection is not detection of the GPU used by the game. Dedicated VRAM is total capacity, not currently available memory; 95% may leave too little space for other GPU resources. Integrated GPUs with no usable dedicated value require an explicit pool override. There is no guessed 4 GiB fallback.
 
-## 🐍 Why isn’t this fixed by Bethesda?
+Epic documents [`r.Streaming.PoolSize`](https://dev.epicgames.com/documentation/en-us/unreal-engine/texture-streaming-configuration-in-unreal-engine) as a pool for textures and, on some platforms, additional resources. A pool of zero means unlimited. That definition alone does **not** establish that a particular Oblivion release has a VRAM detection bug. The bundled settings may be ignored or behave differently in the game's engine build.
 
-> *It only takes one person to fix a broken game.*  
-> *But it also only takes one power-tripping snake to undo all that work.*
+## Code map
 
-## 💡 Behind the Scenes
+| File | Responsibility |
+| --- | --- |
+| [main.cpp](main.cpp) | Explicit CLI modes, adapter selection and reporting |
+| [gpu.cpp](src/gpu.cpp) | Checked DXGI enumeration and scoped COM ownership |
+| [config.cpp](src/config.cpp) | Bounded numeric parsing, substitution and backup/write sequence |
+| [Engine.ini.in](presets/Engine.ini.in) | Original two preset blocks, kept in their original order |
+| [config_tests.cpp](tests/config_tests.cpp) | Pool bounds, Unicode paths, backups and failed-write preservation |
 
-This fix was created because **no one else did** – not even the developers.  
-It doesn’t "boost" framerate by illusion – it solves the **core memory problem**.  
-No Reshade, no gimmicks – just a clean fix.
+The preset is embedded at build time. Duplicate settings/sections from the historical profile are preserved; this refresh does not claim to validate each engine variable.
 
----
+## Validation and downloads
 
-## 🔍 Keywords (SEO)
+The source builds with MinGW-w64 in C++17 mode. Automated tests cover generated configuration and temporary-directory file operations; GPU enumeration is checked locally. No live game configuration was changed, and no in-game benchmark was performed.
 
-- Oblivion Remastered VRAM Fix  
-- Oblivion 2025 GPU memory issue  
-- Oblivion Stuttering and Lag  
-- Fix Memory Leak in Oblivion Remastered  
-- Bethesda VRAM detection bug  
-- Oblivion Optimization Tool  
+The checked-in `Oblivion Remastered Game Fix.exe` and [original release](https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix) are historical binaries. They do not include the current backup handling or CLI. Build from source for the behavior documented here.
 
----
-
-## 💬 Feedback
-
-Love it? Hate it? Want to help test?  
-→ Open an issue or drop me a message on [LinkedIn]([https://www.linkedin.com/in/dein-profil](https://www.linkedin.com/in/rick-armbruster-721600223/))
-
-> Bethesda didn’t fix it.  
-> That doesn’t mean *you* have to live with it.
-
-
-German: 
-
-# Oblivion Remastered – Performance Fix Tool 🛠️🐍
-
-## ⚠️ Problem
-
-**Oblivion Remastered** (2025 Release) hat einen gravierenden Fehler:
-Das Spiel erkennt deinen **GPU-VRAM nicht korrekt** und setzt ihn auf **"unbegrenzt"** – was in Wahrheit bedeutet:
-
-- 🧠 Speicher wird ineffizient behandelt  
-- 🐌 Performance bricht ein (Stuttering, Lags)  
-- 💥 Mögliche Crashes durch Memory Overload  
-
-Seit dem offiziellen Launch wurde dieses Problem **nicht behoben**, obwohl es alle betrifft.
-
-## ✅ Lösung
-
-Dieses Tool erkennt deinen tatsächlichen dedizierten Videospeicher und **setzt eine korrekte VRAM-Grenze** im Spiel – so wie es eigentlich hätte sein sollen.
-
-### Features:
-- Exakte **VRAM-Erkennung**
-- Automatischer Patch für `.ini`-Konfiguration
-- Kein Netz, keine Telemetrie, kein Schnickschnack
-- Läuft **offline, portabel, sofort**
-
-## 🔧 Anwendung
-
-1. Downloade die aktuelle `.exe`  
-2. Starte sie einmal – deine INI wird gepatcht (ein Backup wird automatisch erstellt)
-3. Spiel starten & Performance genießen
-
-➡️ [Download](https://github.com/Rick-laboratory/Oblivion-Remastered-Real-FPS-Performance-Fix.-NO-Ghosting.-Lumen-ON.-Fixes-DLSS.-No-Stutter/releases/tag/Fix)
-
----
-
-## 🤔 Warum nicht offiziell gefixt?
-
-> *Manchmal braucht es nur einen, um kaputtes Design zu reparieren.*  
-> *Aber es braucht auch nur eine Schlange auf einem Machttrip, um jede Form von Fortschritt zu sabotieren.*
-
-## 🐍 Hintergrund
-
-Diese Fixlösung entstand, weil die Modding-Community immer wieder an denselben Problemen vorbeischauen musste – bis jetzt. Kein Reshade, kein FPS-Boost-Hokuspokus – **dieser Patch adressiert die Ursache, nicht nur das Symptom.**
-
-## 🔍 Keywords (für Suchmaschinen)
-
-- Oblivion Remastered VRAM Fix  
-- Oblivion GPU Performance Problem  
-- Stutter Fix Oblivion 2025  
-- OblivionRemastered.exe Memory Limit  
-- Bethesda VRAM Bug Tool  
-- OblivionMod Performance Optimization
-
----
-
-## 💬 Feedback
-
-Hass? Liebe? Bugreport?  
-→ Issues öffnen oder mir eine [Nachricht auf LinkedIn]([https://www.linkedin.com/in/dein-profil](https://www.linkedin.com/in/rick-armbruster-721600223/)) schicken.
-
-> Nur weil Bethesda es nicht fixt, heißt das nicht, dass du es ertragen musst.
+GPL-3.0; see [LICENSE](LICENSE).
